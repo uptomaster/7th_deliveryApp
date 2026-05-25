@@ -41,9 +41,13 @@ function MenuModal({ restaurant, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-5">
       <section className="w-full max-w-[420px] rounded-modal bg-gray-0 p-7 shadow-2xl">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-[36px] font-bold text-gray-5">
+            <p className="text-[12px] font-medium text-primary">
+              {restaurant.category}
+            </p>
+
+            <h2 className="mt-1 text-[36px] font-bold text-gray-5">
               {restaurant.name}
             </h2>
 
@@ -55,7 +59,7 @@ function MenuModal({ restaurant, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="text-[24px] font-medium text-gray-4"
+            className="text-[24px] font-medium text-gray-4 transition hover:text-primary"
             aria-label="모달 닫기"
           >
             ×

@@ -5,6 +5,7 @@ function Badge({ children, variant = 'primary', className = '' }) {
     assistive: 'bg-assistive text-primary',
     yellow: 'bg-yellow-primary text-gray-5',
     gray: 'bg-gray-1 text-gray-4',
+    dark: 'bg-gray-5 text-gray-0',
   }
 
   return (
