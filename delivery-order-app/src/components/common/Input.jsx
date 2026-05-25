@@ -8,7 +8,7 @@ function Input({
   className = '',
 }) {
   const baseStyle =
-    'h-12 w-full rounded-small border px-4 text-[20px] font-medium outline-none transition placeholder:text-gray-2 disabled:cursor-not-allowed disabled:bg-gray-1'
+    'h-12 w-full rounded-small border px-4 text-[20px] font-medium outline-none transition placeholder:text-gray-2 disabled:cursor-not-allowed disabled:bg-gray-1 disabled:text-gray-3'
 
   const stateStyle = error
     ? 'border-primary text-primary focus:border-primary'
