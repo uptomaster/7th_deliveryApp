@@ -291,3 +291,163 @@ cms
 - GitHub Repository 링크
 
 ---
+
+## Git 작업 흐름
+
+본 프로젝트는 개인 브랜치에서 작업한 뒤 Pull Request를 통해 `main` 브랜치에 병합합니다.
+
+---
+
+### 1. 작업 전 main 최신화
+
+작업을 시작하기 전에 항상 `main` 브랜치를 최신 상태로 맞춥니다.
+
+```bash
+git checkout main
+git pull origin main
+```
+
+---
+
+### 2. 개인 브랜치로 이동
+
+본인 브랜치가 이미 있다면 해당 브랜치로 이동합니다.
+
+```bash
+git checkout lnh
+```
+
+브랜치가 없다면 새로 생성합니다.
+
+```bash
+git checkout -b lnh
+```
+
+팀원별 브랜치명은 다음과 같습니다.
+
+```txt
+이남혁: lnh
+한정후: hjh
+조민서: cms
+```
+
+---
+
+### 3. 작업 진행 후 커밋
+
+작업이 끝나면 변경된 파일을 확인합니다.
+
+```bash
+git status
+```
+
+변경사항을 스테이징하고 커밋합니다.
+
+```bash
+git add .
+git commit -m "feat: 작업 내용"
+```
+
+커밋 메시지는 작업 내용에 맞게 작성합니다.
+
+```bash
+git commit -m "feat: 로그인 페이지 구현"
+git commit -m "feat: 음식점 카드 컴포넌트 구현"
+git commit -m "style: 반응형 레이아웃 적용"
+git commit -m "docs: README 수정"
+```
+
+---
+
+### 4. 개인 브랜치 push
+
+작업한 개인 브랜치를 GitHub에 push합니다.
+
+```bash
+git push origin 브랜치명
+```
+
+예시:
+
+```bash
+git push origin lnh
+git push origin hjh
+git push origin cms
+```
+
+---
+
+### 5. Pull Request 생성
+
+GitHub에서 개인 브랜치에서 `main` 브랜치로 Pull Request를 생성합니다.
+
+```txt
+base repository: 원본 레포지토리
+base branch: main
+
+compare branch: 본인 브랜치
+```
+
+Fork 방식으로 작업하는 경우에는 Pull Request 방향을 반드시 확인합니다.
+
+```txt
+base repository: 이남혁 원본 레포지토리
+base branch: main
+
+head repository: 본인 fork 레포지토리
+compare branch: 본인 브랜치
+```
+
+---
+
+### 6. Pull Request 병합
+
+PR 병합 담당자가 코드를 확인한 뒤 GitHub에서 `Merge Pull Request`를 진행합니다.
+
+PR이 병합되면 GitHub의 `main` 브랜치에 작업 내용이 반영됩니다.
+
+---
+
+### 7. PR 병합 후 로컬 main 최신화
+
+GitHub에서 PR이 병합된 뒤에는 로컬 `main` 브랜치도 최신화해야 합니다.
+
+```bash
+git checkout main
+git pull origin main
+```
+
+이 과정을 통해 GitHub의 최신 `main` 내용이 내 로컬에도 반영됩니다.
+
+---
+
+### 8. 다음 작업 시작 전 브랜치 최신화
+
+다음 작업을 시작할 때는 다시 `main`을 최신화한 뒤 개인 브랜치에 반영합니다.
+
+```bash
+git checkout main
+git pull origin main
+git checkout 본인브랜치명
+git merge main
+```
+
+예시:
+
+```bash
+git checkout main
+git pull origin main
+git checkout lnh
+git merge main
+```
+
+---
+
+## 주의사항
+
+- `main` 브랜치에서 직접 작업하지 않습니다.
+- 기능 단위로 커밋을 나눕니다.
+- PR을 만들 때 `base branch`가 `main`인지 확인합니다.
+- Fork 방식에서는 PR 방향이 원본 레포지토리의 `main`으로 향하는지 확인합니다.
+- GitHub에서 PR을 merge했다면 로컬에서 `git merge main lnh` 같은 명령어는 실행하지 않습니다.
+- PR 병합 후에는 반드시 `git checkout main` 후 `git pull origin main`을 실행해 로컬 main을 최신화합니다.
