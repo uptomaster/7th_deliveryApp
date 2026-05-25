@@ -1,47 +1,111 @@
+import { useState } from 'react'
 import Button from '../common/Button'
+import QuantityControl from '../common/QuantityControl'
 
 function MenuModal({ restaurant, onClose }) {
+  const [selectedMenus, setSelectedMenus] = useState({})
+
   if (!restaurant) return null
+
+  const handleAddMenu = (menuId) => {
+    setSelectedMenus((prev) => ({
+      ...prev,
+      [menuId]: 1,
+    }))
+  }
+
+  const handleIncrease = (menuId) => {
+    setSelectedMenus((prev) => ({
+      ...prev,
+      [menuId]: prev[menuId] + 1,
+    }))
+  }
+
+  const handleDecrease = (menuId) => {
+    setSelectedMenus((prev) => {
+      const currentCount = prev[menuId]
+
+      if (currentCount <= 1) {
+        const next = { ...prev }
+        delete next[menuId]
+        return next
+      }
+
+      return {
+        ...prev,
+        [menuId]: currentCount - 1,
+      }
+    })
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-5">
-      <section className="w-full max-w-[520px] rounded-3xl bg-white p-6 shadow-2xl">
-        <div className="flex items-start justify-between gap-4">
+      <section className="w-full max-w-[420px] rounded-modal bg-gray-0 p-7 shadow-2xl">
+        <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-semibold text-orange-500">
-              {restaurant.category}
-            </p>
-            <h2 className="mt-1 text-2xl font-bold text-zinc-900">
+            <h2 className="text-[36px] font-bold text-gray-5">
               {restaurant.name}
             </h2>
-            <p className="mt-2 text-sm text-zinc-500">
-              {restaurant.description}
+
+            <p className="mt-2 text-[12px] font-medium text-gray-3">
+              ⭐ {restaurant.rating}
             </p>
           </div>
 
-          <Button variant="secondary" size="sm" onClick={onClose}>
-            닫기
-          </Button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-[24px] font-medium text-gray-4"
+            aria-label="모달 닫기"
+          >
+            ×
+          </button>
         </div>
 
-        <div className="mt-6 space-y-3">
-          {restaurant.menus?.map((menu) => (
-            <div
-              key={menu.id}
-              className="flex items-center justify-between gap-4 rounded-2xl border border-zinc-100 p-4"
-            >
-              <div>
-                <h3 className="font-bold text-zinc-900">{menu.name}</h3>
-                <p className="mt-1 text-sm text-zinc-500">
-                  {menu.description}
-                </p>
-              </div>
+        <div className="my-6 h-px bg-gray-2" />
 
-              <strong className="shrink-0 text-orange-500">
-                {menu.price}
-              </strong>
-            </div>
-          ))}
+        <div className="space-y-9">
+          {restaurant.menus?.map((menu) => {
+            const count = selectedMenus[menu.id]
+
+            return (
+              <div
+                key={menu.id}
+                className="flex items-center justify-between gap-4"
+              >
+                <div>
+                  <h3 className="text-[20px] font-bold text-gray-5">
+                    {menu.name}
+                  </h3>
+
+                  <p className="mt-1 text-[12px] font-medium text-gray-3">
+                    {menu.description}
+                  </p>
+
+                  <p className="mt-1 text-[20px] font-bold text-gray-5">
+                    {menu.price}
+                  </p>
+                </div>
+
+                {count ? (
+                  <QuantityControl
+                    count={count}
+                    onDecrease={() => handleDecrease(menu.id)}
+                    onIncrease={() => handleIncrease(menu.id)}
+                  />
+                ) : (
+                  <Button
+                    variant="yellow"
+                    size="sm"
+                    className="w-24"
+                    onClick={() => handleAddMenu(menu.id)}
+                  >
+                    담기
+                  </Button>
+                )}
+              </div>
+            )
+          })}
         </div>
       </section>
     </div>
