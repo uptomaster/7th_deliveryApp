@@ -5,6 +5,9 @@ import Badge from '../components/common/Badge'
 import Navbar from '../components/common/Navbar'
 import QuantityControl from '../components/common/QuantityControl'
 import MenuModal from '../components/restaurant/MenuModal'
+import CartList from '../components/cart/CartList'
+import PaymentMethodButton from '../components/payment/PaymentMethodButton'
+import PaymentBox from '../components/payment/PaymentBox'
 
 const sampleRestaurant = {
   id: 1,
@@ -37,6 +40,46 @@ const sampleRestaurant = {
 function ComponentTest() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [count, setCount] = useState(1)
+  const [selectedMethod, setSelectedMethod] = useState('')
+
+  const [cartItems, setCartItems] = useState([
+    {
+      id: 1,
+      name: '소고기 꼬치 세트 (5ea)',
+      description: '육즙 소고기 꼬치 5개 세트',
+      price: '15,000원',
+      count: 1,
+    },
+    {
+      id: 2,
+      name: '닭꼬치 세트 (5ea)',
+      description: '간장 닭꼬치 5개 세트',
+      price: '12,000원',
+      count: 2,
+    },
+  ])
+
+  const handleCartIncrease = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, count: item.count + 1 } : item,
+      ),
+    )
+  }
+
+  const handleCartDecrease = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? { ...item, count: Math.max(1, item.count - 1) }
+          : item,
+      ),
+    )
+  }
+
+  const handleCartRemove = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id))
+  }
 
   return (
     <div className="min-h-screen bg-gray-1">
@@ -49,10 +92,11 @@ function ComponentTest() {
           </h1>
 
           <p className="mt-2 text-[20px] font-medium text-gray-3">
-            팀원들이 Button, Input, Badge, QuantityControl, MenuModal을 확인하는 페이지입니다.
+            팀원들이 공통 컴포넌트를 한 화면에서 확인할 수 있는 테스트
+            페이지입니다.
           </p>
 
-          <div className="mt-8 space-y-10">
+          <div className="mt-8 space-y-12">
             <section>
               <h2 className="mb-4 text-[24px] font-medium text-gray-5">
                 Input
@@ -115,6 +159,47 @@ function ComponentTest() {
               <Button onClick={() => setIsModalOpen(true)}>
                 메뉴 모달 열기
               </Button>
+            </section>
+
+            <section>
+              <h2 className="mb-4 text-[24px] font-medium text-gray-5">
+                Cart
+              </h2>
+
+              <CartList
+                items={cartItems}
+                onIncrease={handleCartIncrease}
+                onDecrease={handleCartDecrease}
+                onRemove={handleCartRemove}
+              />
+            </section>
+
+            <section>
+              <h2 className="mb-4 text-[24px] font-medium text-gray-5">
+                Payment
+              </h2>
+
+              <div className="mb-4 flex flex-wrap gap-3">
+                <PaymentMethodButton
+                  selected={selectedMethod === '카드 결제'}
+                  onClick={() => setSelectedMethod('카드 결제')}
+                >
+                  카드 결제
+                </PaymentMethodButton>
+
+                <PaymentMethodButton
+                  selected={selectedMethod === '현장 결제'}
+                  onClick={() => setSelectedMethod('현장 결제')}
+                >
+                  현장 결제
+                </PaymentMethodButton>
+              </div>
+
+              <PaymentBox
+                totalPrice="39,000원"
+                selectedMethod={selectedMethod}
+                onPayment={() => alert('결제 기능은 추후 구현 예정입니다.')}
+              />
             </section>
           </div>
         </section>
