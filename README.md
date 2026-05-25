@@ -73,24 +73,34 @@ http://localhost:5173
 src
  ┣ assets
  ┃ ┗ images
+ ┃   ┗ hero.png
  ┣ components
+ ┃ ┣ cart
+ ┃ ┃ ┣ CartItem.jsx
+ ┃ ┃ ┗ CartList.jsx
  ┃ ┣ common
+ ┃ ┃ ┣ Badge.jsx
+ ┃ ┃ ┣ Button.jsx
+ ┃ ┃ ┣ Input.jsx
  ┃ ┃ ┣ Navbar.jsx
- ┃ ┃ ┗ Button.jsx
- ┃ ┣ restaurant
- ┃ ┃ ┣ RestaurantCard.jsx
- ┃ ┃ ┗ MenuModal.jsx
+ ┃ ┃ ┗ QuantityControl.jsx
+ ┃ ┣ payment
+ ┃ ┃ ┣ PaymentBox.jsx
+ ┃ ┃ ┗ PaymentMethodButton.jsx
+ ┃ ┗ restaurant
+ ┃   ┣ MenuModal.jsx
+ ┃   ┗ RestaurantCard.jsx
  ┣ data
  ┃ ┗ restaurants.js
  ┣ pages
  ┃ ┣ Login.jsx
- ┃ ┣ Signup.jsx
- ┃ ┗ Main.jsx
+ ┃ ┣ Main.jsx
+ ┃ ┗ Signup.jsx
  ┣ routes
  ┃ ┗ Router.jsx
  ┣ App.jsx
- ┣ main.jsx
- ┗ index.css
+ ┣ index.css
+ ┗ main.jsx
 ```
 
 ---
