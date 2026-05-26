@@ -3,17 +3,19 @@ import { useNavigate } from 'react-router-dom'
 import Input from '../components/common/Input'
 import Button from '../components/common/Button'
 
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+
 function Signup() {
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const navigate = useNavigate()
 
-  const isPasswordMismatch =
-    passwordConfirm !== '' && password !== passwordConfirm
+  const isPasswordInvalid = password !== '' && !PASSWORD_REGEX.test(password)
+  const isPasswordMismatch = passwordConfirm !== '' && password !== passwordConfirm
   const isFormFilled =
     userId.trim() !== '' &&
-    password.trim() !== '' &&
+    PASSWORD_REGEX.test(password) &&
     passwordConfirm.trim() !== '' &&
     !isPasswordMismatch
 
@@ -49,7 +51,17 @@ function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
+                error={isPasswordInvalid}
               />
+              {isPasswordInvalid ? (
+                <p className="text-[14px] font-medium text-primary">
+                  영문, 숫자, 특수문자(@$!%*#?&)를 포함한 8자 이상이어야 합니다.
+                </p>
+              ) : (
+                <p className="text-[14px] font-medium text-gray-3">
+                  영문, 숫자, 특수문자 포함 8자 이상
+                </p>
+              )}
             </div>
 
             <div className="flex flex-col gap-3">
