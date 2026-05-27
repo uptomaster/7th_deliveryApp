@@ -4,6 +4,7 @@ import Signup from '../pages/Signup'
 import Main from '../pages/Main'
 import ComponentTest from '../pages/ComponentTest'
 import Cart from '../pages/Cart'
+import OrderComplete from '../pages/OrderComplete'
 
 function Router() {
   return (
@@ -13,6 +14,7 @@ function Router() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/main" element={<Main />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/order-complete" element={<OrderComplete />} />
       <Route path="/test" element={<ComponentTest />} />
     </Routes>
   )
