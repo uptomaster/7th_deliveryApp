@@ -6,6 +6,16 @@ import ComponentTest from '../pages/ComponentTest'
 import Cart from '../pages/Cart'
 import OrderComplete from '../pages/OrderComplete'
 
+function ProtectedRoute({ children }) {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
+
 function Router() {
   return (
     <Routes>
@@ -13,8 +23,25 @@ function Router() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/main" element={<Main />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/order-complete" element={<OrderComplete />} />
+
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/order-complete"
+        element={
+          <ProtectedRoute>
+            <OrderComplete />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="/test" element={<ComponentTest />} />
     </Routes>
   )
