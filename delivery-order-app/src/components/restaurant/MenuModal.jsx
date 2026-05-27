@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react' // 👈 1. useEffect 추가
 import Button from '../common/Button'
 import QuantityControl from '../common/QuantityControl'
-import { useCart } from '../../context/CartContext' // 👈 1. 추가
+import { useCart } from '../../context/CartContext'
 
 function MenuModal({ restaurant, onClose }) {
   const [selectedMenus, setSelectedMenus] = useState({})
-  const { addToCart } = useCart() // 👈 2. 추가
+  const { addToCart } = useCart()
+
+  // 👈 2. 매장(restaurant)이 바뀔 때마다 장바구니 담기 수량을 초기화하는 로직 추가
+  useEffect(() => {
+    setSelectedMenus({})
+  }, [restaurant?.id])
 
   if (!restaurant) return null
 
@@ -31,7 +36,6 @@ function MenuModal({ restaurant, onClose }) {
     })
   }
 
-  // 👈 3. 장바구니에 담는 함수 추가
   const handleSubmit = () => {
     restaurant.menus?.forEach((menu) => {
       const count = selectedMenus[menu.id]
@@ -77,7 +81,6 @@ function MenuModal({ restaurant, onClose }) {
         </div>
 
         <div className="mt-8 border-t border-gray-2 pt-6">
-          {/* 👈 4. onClick을 handleSubmit으로 변경 */}
           <Button variant="yellow" className="w-full py-4 text-[16px] font-bold" onClick={handleSubmit} disabled={totalCount === 0}>
             {totalCount > 0 ? `${totalCount}개 담기` : '메뉴를 선택해주세요'}
           </Button>
