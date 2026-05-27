@@ -3,29 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import CartList from '../components/cart/CartList'
 import PaymentMethodButton from '../components/payment/PaymentMethodButton'
 import Button from '../components/common/Button'
+import { useCart } from '../context/CartContext' // 👈 1. 전역 상태 불러오기
 
 function Cart() {
   const navigate = useNavigate()
   const [selectedMethod, setSelectedMethod] = useState('')
 
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      storeName: '왕꼬치',
-      name: '닭꼬치 세트 (5ea)',
-      description: '간장 닭꼬치 5개 세트',
-      price: '12,000원',
-      count: 1,
-    },
-    {
-      id: 2,
-      storeName: '왕꼬치',
-      name: '떡꼬치',
-      description: '매콤달콤 떡꼬치',
-      price: '5,000원',
-      count: 1,
-    },
-  ])
+  // 👈 2. 기존의 하드코딩된 useState 데이터를 지우고 전역 상태 함수로 교체
+  const { cartItems, handleIncrease, handleDecrease, handleRemove } = useCart()
 
   const parsePrice = (price) => {
     return Number(price.replaceAll(',', '').replace('원', ''))
@@ -38,28 +23,6 @@ function Cart() {
   const totalPrice = cartItems.reduce((sum, item) => {
     return sum + parsePrice(item.price) * item.count
   }, 0)
-
-  const handleIncrease = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, count: item.count + 1 } : item,
-      ),
-    )
-  }
-
-  const handleDecrease = (id) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, count: Math.max(1, item.count - 1) }
-          : item,
-      ),
-    )
-  }
-
-  const handleRemove = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
-  }
 
   const handlePayment = () => {
     if (cartItems.length === 0) return
@@ -102,12 +65,23 @@ function Cart() {
               </Link>
             </div>
           ) : (
-            <CartList
-              items={cartItems}
-              onIncrease={handleIncrease}
-              onDecrease={handleDecrease}
-              onRemove={handleRemove}
-            />
+            <>
+              <CartList
+                items={cartItems}
+                onIncrease={handleIncrease}
+                onDecrease={handleDecrease}
+                onRemove={handleRemove}
+              />
+              {/* 👈 3. 피그마에 있던 '+ 더 담으러 가기' 텍스트 버튼 추가 */}
+              <div className="mt-6 flex justify-center">
+                <Link
+                  to="/main"
+                  className="text-[16px] font-bold text-primary transition-colors hover:text-secondary"
+                >
+                  + 더 담으러 가기
+                </Link>
+              </div>
+            </>
           )}
         </section>
 
@@ -121,6 +95,7 @@ function Cart() {
               결제 방법
             </p>
 
+            {/* 디자인 원상 복구: 기존 4개 버튼 그대로 유지 */}
             <div className="grid grid-cols-2 gap-4">
               {['카카오페이', '네이버페이', '카드 결제', '무통장 입금'].map(
                 (method) => (
