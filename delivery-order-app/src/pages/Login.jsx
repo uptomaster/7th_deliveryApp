@@ -13,6 +13,8 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!isFormFilled) return
+
+    localStorage.setItem('isLoggedIn', 'true')
     navigate('/main')
   }
 
