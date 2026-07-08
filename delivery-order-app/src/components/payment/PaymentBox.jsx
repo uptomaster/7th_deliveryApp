@@ -1,36 +1,86 @@
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '../common/Button'
+import { useCredit } from '../../hooks/useCredit'
+import { formatCredit, formatWon } from '../../utils/format'
 
-function PaymentBox({
-  totalPrice = '0원',
-  selectedMethod,
-  onPayment,
-}) {
+function PaymentBox({ totalPrice = 0, onPayment }) {
+  const navigate = useNavigate()
+  const { credit } = useCredit()
+
+  const remainingCredit = credit - totalPrice
+  const isInsufficient = remainingCredit < 0
+  const isEmptyPrice = totalPrice <= 0
+
+  const handleButtonClick = () => {
+    if (isEmptyPrice) return
+
+    if (isInsufficient) {
+      navigate('/credit/charge')
+      return
+    }
+
+    onPayment()
+  }
+
   return (
-    <section className="rounded-modal bg-gray-0 p-6">
-      <h2 className="text-[24px] font-medium text-gray-5">결제 정보</h2>
+    <section className="rounded-modal border border-gray-2 bg-gray-0 px-12 py-14">
+      <h2 className="text-center text-[36px] font-bold text-gray-5">
+        결제하기
+      </h2>
 
-      <div className="mt-6 flex items-center justify-between border-b border-gray-2 pb-4">
-        <span className="text-[20px] font-medium text-gray-4">총 결제 금액</span>
-        <strong className="text-[24px] font-bold text-primary">
-          {totalPrice}
-        </strong>
+      <div className="mt-12 flex items-center justify-between text-[20px] font-bold text-gray-5">
+        <span>총 결제금액</span>
+        <span>{formatWon(totalPrice)}</span>
       </div>
 
-      <div className="mt-4">
-        <p className="text-[12px] font-medium text-gray-3">선택한 결제 수단</p>
+      <div className="mt-4 flex flex-col gap-4 rounded-small bg-gray-1 px-3 py-6">
+        <div className="flex items-center justify-between text-[20px] font-bold text-gray-5">
+          <span>보유 크레딧</span>
+          <span>{formatCredit(credit)}</span>
+        </div>
 
-        <p className="mt-1 text-[20px] font-bold text-gray-5">
-          {selectedMethod || '선택 안 됨'}
-        </p>
+        <div className="flex items-center justify-between text-[16px] font-medium text-gray-5">
+          <span>차감 예정 크레딧</span>
+          <span>-{formatCredit(totalPrice)}</span>
+        </div>
+
+        <div
+          className={`flex items-center justify-between text-[16px] font-bold ${
+            isInsufficient ? 'text-primary' : 'text-green-primary'
+          }`}
+        >
+          <span>차감 후 잔액</span>
+          <span>{formatCredit(remainingCredit)}</span>
+        </div>
       </div>
+
+      {isInsufficient && (
+        <div className="mt-4 flex items-center justify-end gap-[10px]">
+          <span className="text-[12px] font-medium text-gray-3">
+            크레딧이 부족합니다.
+          </span>
+
+          <Link
+            to="/credit/charge"
+            className="flex h-8 w-[100px] items-center justify-center whitespace-nowrap rounded-small bg-green-primary text-[12px] font-medium text-gray-0"
+          >
+            크레딧 충전
+          </Link>
+        </div>
+      )}
 
       <Button
         size="full"
-        className="mt-6"
-        disabled={!selectedMethod}
-        onClick={onPayment}
+        className="mt-12"
+        disabled={isEmptyPrice}
+        variant={isInsufficient ? 'outline' : 'primary'}
+        onClick={handleButtonClick}
       >
-        결제하기
+        {isEmptyPrice
+          ? '메뉴를 담아주세요'
+          : isInsufficient
+            ? '크레딧 충전하기'
+            : '결제하기'}
       </Button>
     </section>
   )

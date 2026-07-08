@@ -50,7 +50,9 @@ function MenuOptionSelector({
                   group.type === 'radio'
                     ? selectedValue?.id === option.id
                     : Array.isArray(selectedValue) &&
-                      selectedValue.some((selected) => selected.id === option.id)
+                      selectedValue.some(
+                        (selected) => selected.id === option.id,
+                      )
 
                 return (
                   <label
