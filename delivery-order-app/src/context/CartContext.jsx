@@ -5,27 +5,51 @@ const CartContext = createContext()
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([])
 
-  const addToCart = (restaurantName, menu, count) => {
+  const parsePrice = (price) => {
+    if (typeof price === 'number') return price
+    return Number(price.toString().replace(/[^0-9]/g, ''))
+  }
+
+  const addToCart = (restaurantName, menu, count, selectedOptions = []) => {
     setCartItems((prev) => {
-      // 💡 핵심 포인트: 매장명과 메뉴ID를 합쳐서 세상에 하나뿐인 고유 ID 생성!
-      const uniqueId = `${restaurantName}-${menu.id}`
+      const optionsKey =
+        selectedOptions
+          .map((option) => option.id)
+          .sort()
+          .join('-') || 'default'
+
+      const uniqueId = `${restaurantName}-${menu.id}-${optionsKey}`
+
       const existingItem = prev.find((item) => item.id === uniqueId)
+
+      const basePrice = parsePrice(menu.price)
+      const optionsPrice = selectedOptions.reduce(
+        (sum, option) => sum + parsePrice(option.price),
+        0,
+      )
+
+      const unitPrice = basePrice + optionsPrice
 
       if (existingItem) {
         return prev.map((item) =>
-          item.id === uniqueId ? { ...item, count: item.count + count } : item
+          item.id === uniqueId
+            ? { ...item, count: item.count + count }
+            : item,
         )
       }
+
       return [
         ...prev,
         {
-          id: uniqueId, // 👈 고유 ID로 덮어씌워서 CartList.jsx 수정 없이 바로 호환되게 만듦
+          id: uniqueId,
           originalMenuId: menu.id,
           storeName: restaurantName,
           name: menu.name,
           description: menu.description,
           price: menu.price,
-          count: count,
+          unitPrice,
+          selectedOptions,
+          count,
         },
       ]
     })
@@ -34,21 +58,27 @@ export function CartProvider({ children }) {
   const handleIncrease = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, count: item.count + 1 } : item
-      )
+        item.id === id ? { ...item, count: item.count + 1 } : item,
+      ),
     )
   }
 
   const handleDecrease = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, count: Math.max(1, item.count - 1) } : item
-      )
+        item.id === id
+          ? { ...item, count: Math.max(1, item.count - 1) }
+          : item,
+      ),
     )
   }
 
   const handleRemove = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const clearCart = () => {
+    setCartItems([])
   }
 
   return (
@@ -59,6 +89,7 @@ export function CartProvider({ children }) {
         handleIncrease,
         handleDecrease,
         handleRemove,
+        clearCart,
       }}
     >
       {children}

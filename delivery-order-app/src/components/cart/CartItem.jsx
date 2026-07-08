@@ -1,22 +1,45 @@
 import QuantityControl from '../common/QuantityControl'
 
-function CartItem({
-  item,
-  onIncrease,
-  onDecrease,
-  onRemove,
-}) {
+function CartItem({ item, onIncrease, onDecrease, onRemove }) {
+  const parsePrice = (price) => {
+    if (typeof price === 'number') return price
+    return Number(price.toString().replace(/[^0-9]/g, ''))
+  }
+
+  const formatPrice = (price) => {
+    return `${parsePrice(price).toLocaleString()}원`
+  }
+
   return (
-    <article className="flex items-center justify-between gap-4 border-b border-gray-2 py-4">
+    <article className="flex items-start justify-between gap-4 border-b border-gray-2 py-4">
       <div>
-        <h3 className="text-[20px] font-bold text-gray-5">{item.name}</h3>
+        <p className="text-[12px] font-medium text-primary">
+          {item.storeName}
+        </p>
+
+        <h3 className="mt-1 text-[20px] font-bold text-gray-5">
+          {item.name}
+        </h3>
 
         <p className="mt-1 text-[12px] font-medium text-gray-3">
           {item.description}
         </p>
 
-        <p className="mt-2 text-[20px] font-bold text-primary">
-          {item.price}
+        {item.selectedOptions?.length > 0 && (
+          <ul className="mt-3 space-y-1">
+            {item.selectedOptions.map((option) => (
+              <li
+                key={option.id}
+                className="text-[12px] font-medium text-gray-3"
+              >
+                ㄴ {option.name} +{formatPrice(option.price)}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="mt-3 text-[20px] font-bold text-primary">
+          {formatPrice(item.unitPrice || item.price)}
         </p>
       </div>
 
