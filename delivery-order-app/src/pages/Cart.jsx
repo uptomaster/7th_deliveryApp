@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import CartList from '../components/cart/CartList'
 import Button from '../components/common/Button'
@@ -10,6 +9,7 @@ import { useCart } from '../context/CartContext'
 function Cart() {
   const navigate = useNavigate()
   const { cartItems, handleIncrease, handleDecrease, handleRemove } = useCart()
+  const { payWithCredit } = useCredit()
 
   // 💡 정후 형의 코드와 연결하기 전까지 테스트를 위해 임시로 15,000C를 보유했다고 가정합니다.
   // 나중에 정후 형이 만든 상태 값(myCredit)으로 교체해 주세요!

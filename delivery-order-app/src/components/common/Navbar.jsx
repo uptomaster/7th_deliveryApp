@@ -1,8 +1,26 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Navbar() {
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const loginState = localStorage.getItem('isLoggedIn')
+    setIsLoggedIn(loginState === 'true')
+  }, [])
+
+  const closeMenu = () => {
+    setIsOpen(false)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn')
+    setIsLoggedIn(false)
+    setIsOpen(false)
+    navigate('/login')
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-primary">
@@ -21,12 +39,22 @@ function Navbar() {
             🛒
           </Link>
 
-          <Link
-            to="/login"
-            className="text-[12px] font-medium transition hover:text-assistive"
-          >
-            로그아웃
-          </Link>
+          {isLoggedIn ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-[12px] font-medium text-gray-0 transition hover:text-assistive"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="text-[12px] font-medium text-gray-0 transition hover:text-assistive"
+            >
+              로그인
+            </Link>
+          )}
         </div>
 
         {/* ph 환경 */}
@@ -40,32 +68,43 @@ function Navbar() {
         </button>
       </nav>
 
+      {/* ph 환경 */}
       {isOpen && (
         <div className="border-t border-secondary bg-primary px-5 py-5 dt:hidden">
           <div className="flex flex-col gap-3 text-gray-0">
             <Link
               to="/main"
-              onClick={() => setIsOpen(false)}
-              className="block rounded-button px-4 py-3 text-[20px] font-medium transition hover:bg-secondary"
+              onClick={closeMenu}
+              className="block rounded-button px-4 py-3 text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
             >
               홈
             </Link>
 
             <Link
               to="/cart"
-              onClick={() => setIsOpen(false)}
-              className="block rounded-button px-4 py-3 text-[20px] font-medium transition hover:bg-secondary"
+              onClick={closeMenu}
+              className="block rounded-button px-4 py-3 text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
             >
               🛒 장바구니
             </Link>
 
-            <Link
-              to="/login"
-              onClick={() => setIsOpen(false)}
-              className="block rounded-button px-4 py-3 text-[20px] font-medium transition hover:bg-secondary"
-            >
-              로그아웃
-            </Link>
+            {isLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="block rounded-button px-4 py-3 text-left text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+              >
+                로그아웃
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                className="block rounded-button px-4 py-3 text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+              >
+                로그인
+              </Link>
+            )}
           </div>
         </div>
       )}

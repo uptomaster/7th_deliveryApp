@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react' // 👈 1. useEffect 추가
 import Button from '../common/Button'
 import QuantityControl from '../common/QuantityControl'
 import { useCart } from '../../context/CartContext'
