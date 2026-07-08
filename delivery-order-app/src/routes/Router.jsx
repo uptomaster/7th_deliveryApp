@@ -3,6 +3,7 @@ import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import Main from '../pages/Main'
 import ComponentTest from '../pages/ComponentTest'
+import CreditCharge from '../pages/CreditCharge'
 
 function Router() {
   return (
@@ -12,6 +13,7 @@ function Router() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/main" element={<Main />} />
       <Route path="/test" element={<ComponentTest />} />
+      <Route path="/credit/charge" element={<CreditCharge />} />
     </Routes>
   )
 }
