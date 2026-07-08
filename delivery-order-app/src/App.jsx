@@ -1,15 +1,17 @@
 import { BrowserRouter } from 'react-router-dom'
 import Router from './routes/Router'
-import { CartProvider } from './context/CartContext' // 👈 1. 불러오기 추가
+import { CreditProvider } from './contexts/CreditContext'
+import { CartProvider } from './context/CartContext'
 
 function App() {
   return (
-    <BrowserRouter>
-      {/* 2. CartProvider로 Router 감싸기 */}
-      <CartProvider>
-        <Router />
-      </CartProvider>
-    </BrowserRouter>
+    <CreditProvider>
+      <BrowserRouter>
+        <CartProvider>
+          <Router />
+        </CartProvider>
+      </BrowserRouter>
+    </CreditProvider>
   )
 }
 

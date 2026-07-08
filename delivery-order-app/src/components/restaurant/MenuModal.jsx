@@ -4,6 +4,13 @@ import QuantityControl from '../common/QuantityControl'
 import MenuOptionSelector from './MenuOptionSelector'
 import { useCart } from '../../context/CartContext'
 
+// 💡 남혁 형이 작업할 부분: 나중에 실제 식당 데이터(restaurants.js)에 옵션이 추가되면 이 더미 데이터를 지우고 실제 데이터를 쓰면 됩니다!
+const DUMMY_OPTIONS = [
+  { id: 'opt1', name: '사이즈 업', price: 1000 },
+  { id: 'opt2', name: '치즈 토핑', price: 500 },
+  { id: 'opt3', name: '매운맛 변경', price: 500 },
+]
+
 function MenuModal({ restaurant, onClose }) {
   const { addToCart } = useCart()
 

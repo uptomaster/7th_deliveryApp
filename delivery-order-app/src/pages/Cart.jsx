@@ -22,6 +22,7 @@ function Cart() {
     return Number(price.toString().replace(/[^0-9]/g, ''))
   }
 
+  // 1. 총 결제 금액 계산: 문자열 대신 unitPrice(숫자)가 있으면 그걸 사용합니다.
   const totalPrice = cartItems.reduce((sum, item) => {
     const itemPrice = item.unitPrice || parsePrice(item.price)
     return sum + itemPrice * item.count
@@ -82,7 +83,6 @@ function Cart() {
                 onDecrease={handleDecrease}
                 onRemove={handleRemove}
               />
-
               <div className="mt-6 flex justify-center">
                 <Link
                   to="/main"
