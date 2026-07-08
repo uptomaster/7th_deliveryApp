@@ -3,6 +3,7 @@ import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import Main from '../pages/Main'
 import ComponentTest from '../pages/ComponentTest'
+import CreditCharge from '../pages/CreditCharge'
 import Cart from '../pages/Cart'
 import OrderComplete from '../pages/OrderComplete'
 
@@ -43,6 +44,7 @@ function Router() {
       />
 
       <Route path="/test" element={<ComponentTest />} />
+      <Route path="/credit/charge" element={<CreditCharge />} />
     </Routes>
   )
 }

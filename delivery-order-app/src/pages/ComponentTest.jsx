@@ -6,8 +6,8 @@ import Navbar from '../components/common/Navbar'
 import QuantityControl from '../components/common/QuantityControl'
 import MenuModal from '../components/restaurant/MenuModal'
 import CartList from '../components/cart/CartList'
-import PaymentMethodButton from '../components/payment/PaymentMethodButton'
 import PaymentBox from '../components/payment/PaymentBox'
+import { useCredit } from '../hooks/useCredit'
 
 const sampleRestaurant = {
   id: 1,
@@ -40,7 +40,7 @@ const sampleRestaurant = {
 function ComponentTest() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [count, setCount] = useState(1)
-  const [selectedMethod, setSelectedMethod] = useState('')
+  const { payWithCredit } = useCredit()
 
   const [cartItems, setCartItems] = useState([
     {
@@ -79,6 +79,16 @@ function ComponentTest() {
 
   const handleCartRemove = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const totalPrice = cartItems.reduce(
+    (sum, item) => sum + Number(item.price.replace(/[^0-9]/g, '')) * item.count,
+    0,
+  )
+
+  const handlePayment = () => {
+    const isPaid = payWithCredit(totalPrice)
+    alert(isPaid ? '결제가 완료되었습니다.' : '크레딧이 부족합니다.')
   }
 
   return (
@@ -176,30 +186,10 @@ function ComponentTest() {
 
             <section>
               <h2 className="mb-4 text-[24px] font-medium text-gray-5">
-                Payment
+                Payment (크레딧)
               </h2>
 
-              <div className="mb-4 flex flex-wrap gap-3">
-                <PaymentMethodButton
-                  selected={selectedMethod === '카드 결제'}
-                  onClick={() => setSelectedMethod('카드 결제')}
-                >
-                  카드 결제
-                </PaymentMethodButton>
-
-                <PaymentMethodButton
-                  selected={selectedMethod === '현장 결제'}
-                  onClick={() => setSelectedMethod('현장 결제')}
-                >
-                  현장 결제
-                </PaymentMethodButton>
-              </div>
-
-              <PaymentBox
-                totalPrice="39,000원"
-                selectedMethod={selectedMethod}
-                onPayment={() => alert('결제 기능은 추후 구현 예정입니다.')}
-              />
+              <PaymentBox totalPrice={totalPrice} onPayment={handlePayment} />
             </section>
           </div>
         </section>

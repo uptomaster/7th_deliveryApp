@@ -1,23 +1,16 @@
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import CartList from '../components/cart/CartList'
-import PaymentMethodButton from '../components/payment/PaymentMethodButton'
-import Button from '../components/common/Button'
-import { useCart } from '../context/CartContext' // 👈 1. 전역 상태 불러오기
+import PaymentBox from '../components/payment/PaymentBox'
+import { useCart } from '../context/CartContext'
+import { useCredit } from '../hooks/useCredit'
 
 function Cart() {
   const navigate = useNavigate()
-  const [selectedMethod, setSelectedMethod] = useState('')
-
-  // 👈 2. 기존의 하드코딩된 useState 데이터를 지우고 전역 상태 함수로 교체
   const { cartItems, handleIncrease, handleDecrease, handleRemove } = useCart()
+  const { payWithCredit } = useCredit()
 
   const parsePrice = (price) => {
     return Number(price.replaceAll(',', '').replace('원', ''))
-  }
-
-  const formatPrice = (price) => {
-    return `${price.toLocaleString()}원`
   }
 
   const totalPrice = cartItems.reduce((sum, item) => {
@@ -26,12 +19,10 @@ function Cart() {
 
   const handlePayment = () => {
     if (cartItems.length === 0) return
-    if (!selectedMethod) return
+    if (!payWithCredit(totalPrice)) return
 
     navigate('/order-complete')
   }
-
-  const isPaymentDisabled = cartItems.length === 0 || !selectedMethod
 
   return (
     <div className="min-h-screen bg-gray-1">
@@ -85,51 +76,7 @@ function Cart() {
           )}
         </section>
 
-        <section className="rounded-modal bg-gray-0 p-8">
-          <h2 className="text-center text-[36px] font-bold text-gray-5">
-            결제하기
-          </h2>
-
-          <div className="mt-10">
-            <p className="mb-4 text-[12px] font-medium text-primary">
-              결제 방법
-            </p>
-
-            {/* 디자인 원상 복구: 기존 4개 버튼 그대로 유지 */}
-            <div className="grid grid-cols-2 gap-4">
-              {['카카오페이', '네이버페이', '카드 결제', '무통장 입금'].map(
-                (method) => (
-                  <PaymentMethodButton
-                    key={method}
-                    selected={selectedMethod === method}
-                    onClick={() => setSelectedMethod(method)}
-                  >
-                    {method}
-                  </PaymentMethodButton>
-                ),
-              )}
-            </div>
-          </div>
-
-          <div className="mt-14 flex items-center justify-between">
-            <span className="text-[12px] font-bold text-gray-5">
-              총 결제금액
-            </span>
-
-            <strong className="text-[12px] font-bold text-gray-5">
-              {formatPrice(totalPrice)}
-            </strong>
-          </div>
-
-          <Button
-            size="full"
-            disabled={isPaymentDisabled}
-            onClick={handlePayment}
-            className="mt-8"
-          >
-            {formatPrice(totalPrice)} 결제하기
-          </Button>
-        </section>
+        <PaymentBox totalPrice={totalPrice} onPayment={handlePayment} />
       </main>
     </div>
   )
