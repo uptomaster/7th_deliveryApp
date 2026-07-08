@@ -114,8 +114,8 @@ function ComponentTest() {
 
               <div className="max-w-[360px] space-y-3">
                 <Input placeholder="아이디를 입력하세요" />
-                <Input value="yiyoonseo" onChange={() => {}} />
-                <Input value="leeyoonseo" onChange={() => {}} error />
+                <Input value="namhyuk" onChange={() => {}} />
+                <Input value="namhyuk" onChange={() => {}} error />
                 <Input placeholder="비활성화 상태" disabled />
               </div>
             </section>

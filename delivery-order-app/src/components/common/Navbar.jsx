@@ -1,63 +1,111 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Navbar() {
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const menus = [
-    { id: 1, name: '홈', path: '/main' },
-    { id: 2, name: '음식점', path: '/main' },
-    { id: 3, name: '컴포넌트 테스트', path: '/test' },
-  ]
+  useEffect(() => {
+    const loginState = localStorage.getItem('isLoggedIn')
+    setIsLoggedIn(loginState === 'true')
+  }, [])
+
+  const closeMenu = () => {
+    setIsOpen(false)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn')
+    setIsLoggedIn(false)
+    setIsOpen(false)
+    navigate('/login')
+  }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-2 bg-gray-0">
+    <header className="sticky top-0 z-50 bg-primary">
       <nav className="mx-auto flex h-16 w-full max-w-[1725px] items-center justify-between px-5 dt:px-10">
-        <Link to="/main" className="text-[24px] font-bold text-primary">
-          DELIFOOD
+        <Link to="/main" className="text-[24px] font-bold text-gray-0">
+          어쩌구 저쩌구
         </Link>
 
-        {/* dt 환경: 상단바 */}
-        <ul className="hidden items-center gap-8 text-[20px] font-medium text-gray-5 dt:flex">
-          {menus.map((menu) => (
-            <li key={menu.id}>
-              <Link
-                to={menu.path}
-                className="transition hover:text-primary"
-              >
-                {menu.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {/* dt 환경 */}
+        <div className="hidden items-center gap-5 text-gray-0 dt:flex">
+          <Link
+            to="/cart"
+            aria-label="장바구니"
+            className="text-[20px] transition hover:text-assistive"
+          >
+            🛒
+          </Link>
 
-        {/* ph 환경: 햄버거 버튼 */}
+          {isLoggedIn ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-[12px] font-medium text-gray-0 transition hover:text-assistive"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="text-[12px] font-medium text-gray-0 transition hover:text-assistive"
+            >
+              로그인
+            </Link>
+          )}
+        </div>
+
+        {/* ph 환경 */}
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-button bg-assistive text-[24px] font-bold text-primary dt:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-button text-[24px] font-bold text-gray-0 dt:hidden"
           aria-label="메뉴 열기"
         >
           {isOpen ? '×' : '☰'}
         </button>
       </nav>
 
-      {/* ph 환경: 햄버거 메뉴 */}
+      {/* ph 환경 */}
       {isOpen && (
-        <div className="border-t border-gray-2 bg-gray-0 px-5 py-5 dt:hidden">
-          <ul className="flex flex-col gap-3 text-[20px] font-medium text-gray-5">
-            {menus.map((menu) => (
-              <li key={menu.id}>
-                <Link
-                  to={menu.path}
-                  onClick={() => setIsOpen(false)}
-                  className="block rounded-button px-4 py-3 transition hover:bg-assistive hover:text-primary"
-                >
-                  {menu.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <div className="border-t border-secondary bg-primary px-5 py-5 dt:hidden">
+          <div className="flex flex-col gap-3 text-gray-0">
+            <Link
+              to="/main"
+              onClick={closeMenu}
+              className="block rounded-button px-4 py-3 text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+            >
+              홈
+            </Link>
+
+            <Link
+              to="/cart"
+              onClick={closeMenu}
+              className="block rounded-button px-4 py-3 text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+            >
+              🛒 장바구니
+            </Link>
+
+            {isLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="block rounded-button px-4 py-3 text-left text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+              >
+                로그아웃
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                className="block rounded-button px-4 py-3 text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+              >
+                로그인
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </header>

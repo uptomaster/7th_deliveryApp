@@ -41,7 +41,7 @@ function PaymentBox({ totalPrice = 0, onPayment }) {
 
         <Link
           to="/credit/charge"
-          className="flex h-6 w-[100px] items-center justify-center rounded-small bg-green-primary px-6 py-3 text-[12px] font-medium text-gray-0"
+          className="flex h-8 w-[100px] items-center justify-center whitespace-nowrap rounded-small bg-green-primary text-[12px] font-medium text-gray-0"
         >
           크레딧 충전
         </Link>
