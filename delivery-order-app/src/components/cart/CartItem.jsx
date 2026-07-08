@@ -1,63 +1,53 @@
 import QuantityControl from '../common/QuantityControl'
+import { formatCredit } from '../../utils/format'
 
 function CartItem({ item, onIncrease, onDecrease, onRemove }) {
-  const parsePrice = (price) => {
-    if (typeof price === 'number') return price
-    return Number(price.toString().replace(/[^0-9]/g, ''))
-  }
-
-  const formatPrice = (price) => {
-    return `${parsePrice(price).toLocaleString()}원`
-  }
-
   return (
-    <article className="flex items-start justify-between gap-4 border-b border-gray-2 py-4">
-      <div>
-        <p className="text-[12px] font-medium text-primary">
-          {item.storeName}
-        </p>
+    <article className="rounded-modal border border-gray-2 bg-gray-0">
+      <div className="rounded-t-modal bg-assistive px-4 py-3">
+        <p className="text-[16px] font-bold text-gray-5">{item.storeName}</p>
+      </div>
 
-        <h3 className="mt-1 text-[20px] font-bold text-gray-5">
-          {item.name}
-        </h3>
+      <div className="px-4 py-4">
+        <h3 className="text-[20px] font-bold text-gray-5">{item.name}</h3>
 
         <p className="mt-1 text-[12px] font-medium text-gray-3">
           {item.description}
         </p>
 
         {item.selectedOptions?.length > 0 && (
-          <ul className="mt-3 space-y-1">
+          <div className="mt-3 flex flex-wrap gap-2">
             {item.selectedOptions.map((option) => (
-              <li
+              <span
                 key={option.id}
-                className="text-[12px] font-medium text-gray-3"
+                className="rounded-small border border-primary px-2 py-1 text-[12px] font-medium text-primary"
               >
-                ㄴ {option.groupTitle}: {option.name}{' '}
-                {formatPrice(option.price)}
-              </li>
+                {option.name}
+              </span>
             ))}
-          </ul>
+          </div>
         )}
 
-        <p className="mt-3 text-[20px] font-bold text-primary">
-          {formatPrice(item.unitPrice || item.price)}
+        <p className="mt-4 text-[20px] font-bold text-gray-5">
+          {formatCredit(item.unitPrice || item.price)}
         </p>
-      </div>
 
-      <div className="flex flex-col items-end gap-3">
-        <button
-          type="button"
-          onClick={() => onRemove(item.id)}
-          className="text-[12px] font-medium text-gray-3 transition hover:text-primary"
-        >
-          삭제
-        </button>
+        <div className="mt-4 flex items-center justify-between">
+          <QuantityControl
+            count={item.count}
+            onDecrease={() => onDecrease(item.id)}
+            onIncrease={() => onIncrease(item.id)}
+          />
 
-        <QuantityControl
-          count={item.count}
-          onDecrease={() => onDecrease(item.id)}
-          onIncrease={() => onIncrease(item.id)}
-        />
+          <button
+            type="button"
+            onClick={() => onRemove(item.id)}
+            className="text-[20px] font-medium text-gray-5 transition hover:text-primary"
+            aria-label="삭제"
+          >
+            ×
+          </button>
+        </div>
       </div>
     </article>
   )

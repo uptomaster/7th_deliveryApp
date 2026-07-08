@@ -1,14 +1,10 @@
 import { createContext, useContext, useState } from 'react'
+import { parseCredit } from '../utils/format'
 
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([])
-
-  const parsePrice = (price) => {
-    if (typeof price === 'number') return price
-    return Number(price.toString().replace(/[^0-9]/g, ''))
-  }
 
   const addToCart = (restaurantName, menu, count, selectedOptions = []) => {
     setCartItems((prev) => {
@@ -22,10 +18,10 @@ export function CartProvider({ children }) {
 
       const existingItem = prev.find((item) => item.id === uniqueId)
 
-      const basePrice = parsePrice(menu.price)
+      const basePrice = parseCredit(menu.price)
 
       const optionsPrice = selectedOptions.reduce(
-        (sum, option) => sum + parsePrice(option.price),
+        (sum, option) => sum + parseCredit(option.price),
         0,
       )
 

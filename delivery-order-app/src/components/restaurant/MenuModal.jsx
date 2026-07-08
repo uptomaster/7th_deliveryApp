@@ -3,13 +3,7 @@ import Button from '../common/Button'
 import QuantityControl from '../common/QuantityControl'
 import MenuOptionSelector from './MenuOptionSelector'
 import { useCart } from '../../context/CartContext'
-
-// 💡 남혁 형이 작업할 부분: 나중에 실제 식당 데이터(restaurants.js)에 옵션이 추가되면 이 더미 데이터를 지우고 실제 데이터를 쓰면 됩니다!
-const DUMMY_OPTIONS = [
-  { id: 'opt1', name: '사이즈 업', price: 1000 },
-  { id: 'opt2', name: '치즈 토핑', price: 500 },
-  { id: 'opt3', name: '매운맛 변경', price: 500 },
-]
+import { formatCredit, parseCredit } from '../../utils/format'
 
 function MenuModal({ restaurant, onClose }) {
   const { addToCart } = useCart()
@@ -26,11 +20,6 @@ function MenuModal({ restaurant, onClose }) {
 
   if (!restaurant) return null
 
-  const parsePrice = (price) => {
-    if (typeof price === 'number') return price
-    return Number(price.toString().replace(/[^0-9]/g, ''))
-  }
-
   const createSelectedOption = (group, option) => ({
     ...option,
     groupId: group.id,
@@ -43,7 +32,7 @@ function MenuModal({ restaurant, onClose }) {
     menu.optionGroups?.forEach((group) => {
       if (group.type === 'radio') {
         const defaultOption =
-          group.options.find((option) => parsePrice(option.price) === 0) ||
+          group.options.find((option) => parseCredit(option.price) === 0) ||
           group.options[0]
 
         initialMap[group.id] = createSelectedOption(group, defaultOption)
@@ -65,17 +54,21 @@ function MenuModal({ restaurant, onClose }) {
     })
   }
 
-  const getTotalPrice = () => {
+  const getUnitPrice = () => {
     if (!activeMenu) return 0
 
-    const basePrice = parsePrice(activeMenu.price)
+    const basePrice = parseCredit(activeMenu.price)
 
     const optionsPrice = getSelectedOptions().reduce(
-      (sum, option) => sum + parsePrice(option.price),
+      (sum, option) => sum + parseCredit(option.price),
       0,
     )
 
-    return (basePrice + optionsPrice) * count
+    return basePrice + optionsPrice
+  }
+
+  const getTotalPrice = () => {
+    return getUnitPrice() * count
   }
 
   const handleSelectRadio = (group, option) => {
@@ -132,36 +125,34 @@ function MenuModal({ restaurant, onClose }) {
 
   if (activeMenu) {
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-5">
-        <section className="flex w-full max-w-[420px] flex-col rounded-modal bg-gray-0 p-7 shadow-2xl">
-          <div className="flex items-start justify-between gap-4">
+      <div className="fixed inset-0 z-[100] flex justify-end bg-black/30">
+        <section className="flex h-full w-full max-w-[360px] flex-col bg-gray-0 px-4 py-6 shadow-2xl">
+          <div className="flex items-start justify-between">
             <div>
               <h2 className="text-[24px] font-bold text-gray-5">
-                {activeMenu.name}
+                {restaurant.name}
               </h2>
+
+              <h3 className="mt-8 text-[20px] font-bold text-gray-5">
+                {activeMenu.name}
+              </h3>
 
               <p className="mt-1 text-[12px] font-medium text-gray-3">
                 {activeMenu.description}
-              </p>
-
-              <p className="mt-2 text-[20px] font-bold text-gray-5">
-                {activeMenu.price}
               </p>
             </div>
 
             <button
               type="button"
-              onClick={handleBackToMenuList}
-              className="text-[24px] font-medium text-gray-4 transition hover:text-primary"
-              aria-label="메뉴 목록으로 돌아가기"
+              onClick={onClose}
+              className="text-[24px] font-medium text-gray-5 transition hover:text-primary"
+              aria-label="모달 닫기"
             >
-              ←
+              ×
             </button>
           </div>
 
-          <div className="my-6 h-px bg-gray-2" />
-
-          <div className="max-h-[50vh] flex-1 overflow-y-auto pr-2">
+          <div className="mt-4 flex-1 overflow-y-auto pr-1">
             <MenuOptionSelector
               optionGroups={activeMenu.optionGroups}
               selectedOptionMap={selectedOptionMap}
@@ -170,36 +161,48 @@ function MenuModal({ restaurant, onClose }) {
             />
           </div>
 
-          <div className="my-6 h-px bg-gray-2" />
+          <div className="border-t border-gray-2 pt-5">
+            <div className="mb-5 flex items-center justify-between">
+              <strong className="text-[20px] font-bold text-gray-5">
+                {formatCredit(getTotalPrice())}
+              </strong>
 
-          <div className="mb-6 flex items-center justify-between">
-            <span className="text-[16px] font-bold text-gray-5">수량</span>
+              <QuantityControl
+                count={count}
+                onDecrease={() => setCount((prev) => Math.max(1, prev - 1))}
+                onIncrease={() => setCount((prev) => prev + 1)}
+              />
+            </div>
 
-            <QuantityControl
-              count={count}
-              onDecrease={() => setCount((prev) => Math.max(1, prev - 1))}
-              onIncrease={() => setCount((prev) => prev + 1)}
-            />
+            <div className="grid grid-cols-[80px_1fr] gap-3">
+              <Button
+                variant="outline"
+                size="full"
+                onClick={handleBackToMenuList}
+              >
+                이전
+              </Button>
+
+              <Button variant="primary" size="full" onClick={handleAddToCart}>
+                담기
+              </Button>
+            </div>
           </div>
-
-          <Button variant="primary" size="full" onClick={handleAddToCart}>
-            {getTotalPrice().toLocaleString()}원 담기
-          </Button>
         </section>
       </div>
     )
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-5">
-      <section className="flex w-full max-w-[420px] flex-col rounded-modal bg-gray-0 p-7 shadow-2xl">
-        <div className="flex items-start justify-between gap-4">
+    <div className="fixed inset-0 z-[100] flex justify-end bg-black/30">
+      <section className="flex h-full w-full max-w-[360px] flex-col bg-gray-0 px-4 py-6 shadow-2xl">
+        <div className="flex items-start justify-between">
           <div>
             <p className="text-[12px] font-medium text-primary">
               {restaurant.category}
             </p>
 
-            <h2 className="mt-1 text-[36px] font-bold text-gray-5">
+            <h2 className="mt-1 text-[24px] font-bold text-gray-5">
               {restaurant.name}
             </h2>
 
@@ -211,43 +214,40 @@ function MenuModal({ restaurant, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="text-[24px] font-medium text-gray-4 transition hover:text-primary"
+            className="text-[24px] font-medium text-gray-5 transition hover:text-primary"
             aria-label="모달 닫기"
           >
             ×
           </button>
         </div>
 
-        <div className="my-6 h-px bg-gray-2" />
-
-        <div className="max-h-[50vh] space-y-9 overflow-y-auto pr-2">
+        <div className="mt-8 flex-1 space-y-8 overflow-y-auto pr-1">
           {restaurant.menus?.map((menu) => (
-            <div
-              key={menu.id}
-              className="flex items-center justify-between gap-4"
-            >
-              <div>
-                <h3 className="text-[20px] font-bold text-gray-5">
-                  {menu.name}
-                </h3>
+            <article key={menu.id}>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-[20px] font-bold text-gray-5">
+                    {menu.name}
+                  </h3>
 
-                <p className="mt-1 text-[12px] font-medium text-gray-3">
-                  {menu.description}
-                </p>
+                  <p className="mt-1 text-[12px] font-medium text-gray-3">
+                    {menu.description}
+                  </p>
+                </div>
 
-                <p className="mt-1 text-[20px] font-bold text-gray-5">
-                  {menu.price}
-                </p>
+                <button
+                  type="button"
+                  onClick={() => handleOpenOptionPage(menu)}
+                  className="rounded-small border border-primary px-2 py-1 text-[12px] font-medium text-primary transition hover:bg-assistive"
+                >
+                  선택
+                </button>
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleOpenOptionPage(menu)}
-              >
-                선택
-              </Button>
-            </div>
+              <p className="mt-4 text-right text-[20px] font-bold text-gray-5">
+                {formatCredit(menu.price)}
+              </p>
+            </article>
           ))}
         </div>
       </section>
