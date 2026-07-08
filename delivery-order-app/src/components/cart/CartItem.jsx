@@ -32,7 +32,8 @@ function CartItem({ item, onIncrease, onDecrease, onRemove }) {
                 key={option.id}
                 className="text-[12px] font-medium text-gray-3"
               >
-                ㄴ {option.name} +{formatPrice(option.price)}
+                ㄴ {option.groupTitle}: {option.name}{' '}
+                {formatPrice(option.price)}
               </li>
             ))}
           </ul>

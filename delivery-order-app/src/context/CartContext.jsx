@@ -23,6 +23,7 @@ export function CartProvider({ children }) {
       const existingItem = prev.find((item) => item.id === uniqueId)
 
       const basePrice = parsePrice(menu.price)
+
       const optionsPrice = selectedOptions.reduce(
         (sum, option) => sum + parsePrice(option.price),
         0,
