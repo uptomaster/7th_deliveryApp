@@ -2,20 +2,40 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Input from '../components/common/Input'
 import Button from '../components/common/Button'
+import { login, extractAccessToken } from '../api/authApi'
+import { setAccessToken } from '../api/axiosInstance'
 
 function Login() {
-  const [userId, setUserId] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
 
-  const isFormFilled = userId.trim() !== '' && password.trim() !== ''
+  const isFormFilled = email.trim() !== '' && password.trim() !== ''
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isFormFilled) return
+    if (!isFormFilled || isSubmitting) return
 
-    localStorage.setItem('isLoggedIn', 'true')
-    navigate('/main')
+    setErrorMessage('')
+    setIsSubmitting(true)
+
+    try {
+      const data = await login({ email, password })
+      const accessToken = extractAccessToken(data)
+
+      if (accessToken) {
+        setAccessToken(accessToken)
+      }
+
+      localStorage.setItem('isLoggedIn', 'true')
+      navigate('/main')
+    } catch {
+      setErrorMessage('아이디 또는 비밀번호를 확인해주세요.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -28,12 +48,12 @@ function Login() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-[52px]">
           <div className="flex flex-col gap-[48px] px-4">
             <div className="flex flex-col gap-3">
-              <label className="text-[20px] font-medium text-gray-5">아이디</label>
+              <label className="text-[20px] font-medium text-gray-5">이메일</label>
               <Input
-                type="text"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="아이디를 입력하세요"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일을 입력하세요"
               />
             </div>
 
@@ -46,6 +66,10 @@ function Login() {
                 placeholder="비밀번호를 입력하세요"
               />
             </div>
+
+            {errorMessage && (
+              <p className="text-[14px] font-medium text-primary">{errorMessage}</p>
+            )}
           </div>
 
           <p className="text-center text-[15px] font-medium">
@@ -59,9 +83,9 @@ function Login() {
             type="submit"
             variant={isFormFilled ? 'primary' : 'secondary'}
             size="full"
-            disabled={!isFormFilled}
+            disabled={!isFormFilled || isSubmitting}
           >
-            로그인
+            {isSubmitting ? '로그인 중...' : '로그인'}
           </Button>
         </form>
       </div>
