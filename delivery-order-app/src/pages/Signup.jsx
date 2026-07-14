@@ -2,27 +2,43 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Input from '../components/common/Input'
 import Button from '../components/common/Button'
+import { signup } from '../api/authApi'
 
 const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 
 function Signup() {
-  const [userId, setUserId] = useState('')
+  const [email, setEmail] = useState('')
+  const [nickname, setNickname] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
 
   const isPasswordInvalid = password !== '' && !PASSWORD_REGEX.test(password)
   const isPasswordMismatch = passwordConfirm !== '' && password !== passwordConfirm
   const isFormFilled =
-    userId.trim() !== '' &&
+    email.trim() !== '' &&
+    nickname.trim() !== '' &&
     PASSWORD_REGEX.test(password) &&
     passwordConfirm.trim() !== '' &&
     !isPasswordMismatch
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isFormFilled) return
-    navigate('/login')
+    if (!isFormFilled || isSubmitting) return
+
+    setErrorMessage('')
+    setIsSubmitting(true)
+
+    try {
+      await signup({ email, password, nickname })
+      navigate('/login')
+    } catch {
+      setErrorMessage('회원가입에 실패했습니다. 입력 정보를 확인해주세요.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -35,12 +51,22 @@ function Signup() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-[64px]">
           <div className="flex flex-col gap-[48px] px-4">
             <div className="flex flex-col gap-3">
-              <label className="text-[20px] font-medium text-gray-5">아이디</label>
+              <label className="text-[20px] font-medium text-gray-5">이메일</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="이메일을 입력하세요"
+              />
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <label className="text-[20px] font-medium text-gray-5">닉네임</label>
               <Input
                 type="text"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="아이디를 입력하세요"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                placeholder="닉네임을 입력하세요"
               />
             </div>
 
@@ -79,15 +105,19 @@ function Signup() {
                 </p>
               )}
             </div>
+
+            {errorMessage && (
+              <p className="text-[14px] font-medium text-primary">{errorMessage}</p>
+            )}
           </div>
 
           <Button
             type="submit"
             variant={isFormFilled ? 'primary' : 'secondary'}
             size="full"
-            disabled={!isFormFilled}
+            disabled={!isFormFilled || isSubmitting}
           >
-            회원가입하기
+            {isSubmitting ? '가입 중...' : '회원가입하기'}
           </Button>
         </form>
       </div>
