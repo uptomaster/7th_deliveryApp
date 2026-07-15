@@ -1,15 +1,17 @@
-function CreditPresetButton({ amount, selected = false, onClick }) {
+import { formatCredit } from '../../utils/format'
+
+function CreditPresetButton({ amount, selected, onClick }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-small px-3 py-2 text-[20px] font-medium transition ${
+      className={`h-10 min-w-[110px] rounded-small border px-4 text-[16px] font-bold transition ${
         selected
-          ? 'border border-green-primary bg-green-secondary text-gray-0'
-          : 'bg-gray-1 text-gray-5 hover:bg-gray-2'
+          ? 'border-primary bg-primary text-gray-0'
+          : 'border-gray-2 bg-gray-0 text-gray-5 hover:border-primary'
       }`}
     >
-      +{amount.toLocaleString('ko-KR')}C
+      +{formatCredit(amount)}
     </button>
   )
 }

@@ -34,10 +34,19 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status
+    const currentPath = window.location.pathname
+
+    if (status === 401) {
       clearAccessToken()
       localStorage.removeItem('isLoggedIn')
-      window.location.href = '/login'
+
+      const isAuthPage =
+        currentPath === '/login' || currentPath === '/signup'
+
+      if (!isAuthPage) {
+        window.location.replace('/login')
+      }
     }
 
     return Promise.reject(error)
