@@ -6,15 +6,7 @@ import { useCredit } from '../hooks/useCredit'
 
 function Cart() {
   const navigate = useNavigate()
-
-  const {
-    cartItems,
-    handleIncrease,
-    handleDecrease,
-    handleRemove,
-    clearCart,
-  } = useCart()
-
+  const { cartItems, handleIncrease, handleDecrease, handleRemove, clearCart } = useCart()
   const { payWithCredit } = useCredit()
 
   const parsePrice = (price) => {
@@ -29,76 +21,47 @@ function Cart() {
 
   const isCartEmpty = cartItems.length === 0
 
-  const handlePayment = () => {
+  // 결제 버튼 누를 때 서버 통신 및 결과 받아오기
+  const handlePayment = async () => {
     if (isCartEmpty) return
+    const result = await payWithCredit(totalPrice) 
 
-    const isPaid = payWithCredit(totalPrice)
-
-    if (!isPaid) {
-      navigate('/credit/charge')
+    if (!result.success) {
+      if (result.reason === 'insufficient') navigate('/credit/charge')
       return
     }
 
     clearCart?.()
-    navigate('/order-complete')
+    navigate('/order-complete', { state: { orderId: result.orderId } })
   }
 
   return (
     <div className="min-h-screen bg-gray-1">
       <header className="sticky top-0 z-50 bg-primary">
         <div className="mx-auto flex h-14 max-w-[1725px] items-center gap-4 px-5 dt:px-10">
-          <Link
-            to="/main"
-            className="flex h-7 w-7 items-center justify-center rounded-small bg-secondary text-[20px] font-bold text-gray-0"
-            aria-label="뒤로가기"
-          >
-            ←
-          </Link>
-
+          <Link to="/main" className="flex h-7 w-7 items-center justify-center rounded-small bg-secondary text-[20px] font-bold text-gray-0">←</Link>
           <h1 className="text-[24px] font-bold text-gray-0">장바구니</h1>
         </div>
       </header>
-
       <main className="mx-auto grid max-w-[1100px] grid-cols-1 gap-10 px-5 py-16 dt:grid-cols-[1fr_380px]">
         <section>
           {isCartEmpty ? (
             <div className="flex min-h-[300px] flex-col items-center justify-center">
-              <p className="text-[20px] font-medium text-gray-5">
-                장바구니가 비어있습니다.
-              </p>
-
-              <Link
-                to="/main"
-                className="mt-5 rounded-button bg-yellow-primary px-8 py-3 text-[20px] font-bold text-gray-5"
-              >
-                쇼핑하러 가기
-              </Link>
+              <p className="text-[20px] font-medium text-gray-5">장바구니가 비어있습니다.</p>
+              <Link to="/main" className="mt-5 rounded-button bg-yellow-primary px-8 py-3 text-[20px] font-bold text-gray-5">쇼핑하러 가기</Link>
             </div>
           ) : (
             <>
-              <CartList
-                items={cartItems}
-                onIncrease={handleIncrease}
-                onDecrease={handleDecrease}
-                onRemove={handleRemove}
-              />
-
+              <CartList items={cartItems} onIncrease={handleIncrease} onDecrease={handleDecrease} onRemove={handleRemove} />
               <div className="mt-6 flex justify-center">
-                <Link
-                  to="/main"
-                  className="text-[16px] font-bold text-primary transition-colors hover:text-secondary"
-                >
-                  + 더 담으러 가기
-                </Link>
+                <Link to="/main" className="text-[16px] font-bold text-primary transition-colors hover:text-secondary">+ 더 담으러 가기</Link>
               </div>
             </>
           )}
         </section>
-
         <PaymentBox totalPrice={totalPrice} onPayment={handlePayment} />
       </main>
     </div>
   )
 }
-
 export default Cart
