@@ -16,7 +16,6 @@ export function CreditProvider({ children }) {
 
   useEffect(() => { fetchCredit() }, [])
 
-  // 2. 크레딧 충전 API 연동
   const chargeCredit = async (amount) => {
     try {
       const response = await axiosInstance.post('/credits/charge', { amount })
@@ -27,17 +26,28 @@ export function CreditProvider({ children }) {
       return false
     } catch (error) {
       console.error('충전 실패:', error)
-      alert('크레딧 충전에 실패했습니다.')
       return false
     }
   }
 
-  // 아래는 아직 임시 코드
-  const payWithCredit = (amount) => {
-    if (credit < amount) return false
-    setCredit((prev) => prev - amount)
-    return true
+  // 3. 결제 및 주문 생성 API 연동 (최종)
+  const payWithCredit = async (amount) => {
+    if (credit < amount) return { success: false, reason: 'insufficient' }
+    
+    try {
+      const response = await axiosInstance.post('/orders', { usedCredit: amount })
+      if (response.data.isSuccess) {
+        await fetchCredit() 
+        return { success: true, orderId: response.data.result.orderId } 
+      }
+      return { success: false }
+    } catch (error) {
+      console.error('결제 실패:', error)
+      alert('결제 처리 중 오류가 발생했습니다.')
+      return { success: false }
+    }
   }
+
   const hasEnoughCredit = (amount) => credit >= amount
 
   return (
