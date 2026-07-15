@@ -12,15 +12,19 @@ function normalizeCartItem(item) {
   return {
     id: item.cartItemId,
     cartItemId: item.cartItemId,
+
     menuId: item.menuId,
     name: item.menuName,
     menuName: item.menuName,
+
     description: '',
     count: item.itemQuantity,
     itemQuantity: item.itemQuantity,
+
     price: item.menuPrice,
     menuPrice: item.menuPrice,
     unitPrice,
+
     selectedOptions: options.map((option) => ({
       id: option.optionId,
       optionId: option.optionId,
@@ -35,9 +39,9 @@ function normalizeCartItem(item) {
 
 function normalizeCart(cart) {
   return {
-    cartId: cart.cartId,
-    items: cart.items?.map(normalizeCartItem) ?? [],
-    totalCartPrice: cart.totalCartPrice ?? 0,
+    cartId: cart?.cartId ?? null,
+    items: cart?.items?.map(normalizeCartItem) ?? [],
+    totalCartPrice: cart?.totalCartPrice ?? 0,
   }
 }
 
@@ -51,19 +55,30 @@ export async function fetchCart() {
 }
 
 export async function addCartItem({ menuId, itemQuantity, optionIds }) {
-  const { data } = await axiosInstance.post('/carts/items', {
-    menuId,
-    itemQuantity,
-    optionIds,
-  })
+  const payload = {
+    menuId: Number(menuId),
+    itemQuantity: Number(itemQuantity),
+    optionIds: optionIds.map(Number),
+  }
+
+  console.log('POST /carts/items payload:', payload)
+
+  const { data } = await axiosInstance.post('/carts/items', payload)
 
   return data
 }
 
 export async function updateCartItemQuantity(cartItemId, itemQuantity) {
-  const { data } = await axiosInstance.patch(`/carts/items/${cartItemId}`, {
-    itemQuantity,
-  })
+  const payload = {
+    itemQuantity: Number(itemQuantity),
+  }
+
+  console.log(`PATCH /carts/items/${cartItemId} payload:`, payload)
+
+  const { data } = await axiosInstance.patch(
+    `/carts/items/${cartItemId}`,
+    payload,
+  )
 
   return data
 }
