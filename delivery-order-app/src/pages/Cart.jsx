@@ -27,13 +27,18 @@ function Cart() {
     loadCart()
   }, [])
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (isCartEmpty) return
 
-    const isPaid = payWithCredit(totalCartPrice)
+    const paymentResult = await payWithCredit(totalCartPrice)
 
-    if (!isPaid) {
-      navigate('/credit/charge')
+    if (!paymentResult.success) {
+      if (paymentResult.reason === 'insufficient') {
+        navigate('/credit/charge')
+        return
+      }
+
+      alert('결제에 실패했습니다.')
       return
     }
 
