@@ -13,7 +13,7 @@ function QuantityControl({
         type="button"
         onClick={onDecrease}
         disabled={isMin}
-        className="flex h-5 w-5 items-center justify-center rounded-small bg-gray-1 text-[20px] font-medium text-gray-4 transition hover:bg-gray-2 disabled:cursor-not-allowed disabled:text-gray-2"
+        className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-small bg-gray-1 text-[20px] font-medium text-gray-4 transition hover:bg-gray-2 disabled:cursor-not-allowed disabled:text-gray-2"
         aria-label="수량 감소"
       >
         -
@@ -26,7 +26,7 @@ function QuantityControl({
       <button
         type="button"
         onClick={onIncrease}
-        className="flex h-5 w-5 items-center justify-center rounded-small bg-gray-1 text-[20px] font-medium text-gray-4 transition hover:bg-gray-2"
+        className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-small bg-gray-1 text-[20px] font-medium text-gray-4 transition hover:bg-gray-2"
         aria-label="수량 증가"
       >
         +

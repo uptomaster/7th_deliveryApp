@@ -145,7 +145,7 @@ function MenuModal({ restaurant, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="text-[24px] font-medium text-gray-5 transition hover:text-primary"
+              className="cursor-pointer text-[24px] font-medium text-gray-5 transition hover:text-primary"
               aria-label="모달 닫기"
             >
               ×
@@ -238,7 +238,7 @@ function MenuModal({ restaurant, onClose }) {
                 <button
                   type="button"
                   onClick={() => handleOpenOptionPage(menu)}
-                  className="rounded-small border border-primary px-2 py-1 text-[12px] font-medium text-primary transition hover:bg-assistive"
+                  className="cursor-pointer rounded-small border border-primary px-2 py-1 text-[12px] font-medium text-primary transition hover:bg-assistive"
                 >
                   선택
                 </button>

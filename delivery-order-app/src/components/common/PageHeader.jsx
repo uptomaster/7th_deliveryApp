@@ -9,7 +9,7 @@ function PageHeader({ title }) {
         type="button"
         onClick={() => navigate(-1)}
         aria-label="뒤로가기"
-        className="flex h-12 w-12 items-center justify-center rounded-button bg-white/20 text-[24px] text-gray-0"
+        className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-button bg-white/20 text-[24px] text-gray-0"
       >
         ←
       </button>

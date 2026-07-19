@@ -42,7 +42,7 @@ function CartItem({ item, onIncrease, onDecrease, onRemove }) {
           <button
             type="button"
             onClick={() => onRemove(item.id)}
-            className="text-[20px] font-medium text-gray-5 transition hover:text-primary"
+            className="cursor-pointer text-[20px] font-medium text-gray-5 transition hover:text-primary"
             aria-label="삭제"
           >
             ×

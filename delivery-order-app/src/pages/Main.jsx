@@ -81,7 +81,7 @@ function Main() {
                   key={category.id}
                   type="button"
                   onClick={() => handleCategoryClick(category.name)}
-                  className={`rounded-small border px-3 py-2 text-[12px] font-bold transition ${
+                  className={`cursor-pointer rounded-small border px-3 py-2 text-[12px] font-bold transition ${
                     selectedCategory === category.name
                       ? 'border-primary bg-primary text-gray-0'
                       : 'border-gray-2 bg-gray-0 text-gray-5 hover:border-primary'
