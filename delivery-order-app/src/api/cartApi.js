@@ -13,6 +13,8 @@ function normalizeCartItem(item) {
     id: item.cartItemId,
     cartItemId: item.cartItemId,
 
+    storeName: item.storeName,
+
     menuId: item.menuId,
     name: item.menuName,
     menuName: item.menuName,

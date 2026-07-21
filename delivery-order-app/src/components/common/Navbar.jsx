@@ -43,7 +43,7 @@ function Navbar() {
             <button
               type="button"
               onClick={handleLogout}
-              className="text-[12px] font-medium text-gray-0 transition hover:text-assistive"
+              className="cursor-pointer text-[12px] font-medium text-gray-0 transition hover:text-assistive"
             >
               로그아웃
             </button>
@@ -61,7 +61,7 @@ function Navbar() {
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-button text-[24px] font-bold text-gray-0 dt:hidden"
+          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-button text-[24px] font-bold text-gray-0 dt:hidden"
           aria-label="메뉴 열기"
         >
           {isOpen ? '×' : '☰'}
@@ -92,7 +92,7 @@ function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="block rounded-button px-4 py-3 text-left text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
+                className="block cursor-pointer rounded-button px-4 py-3 text-left text-[20px] font-medium text-gray-0 transition hover:bg-secondary"
               >
                 로그아웃
               </button>

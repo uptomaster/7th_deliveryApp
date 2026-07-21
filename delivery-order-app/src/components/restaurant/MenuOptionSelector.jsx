@@ -63,7 +63,7 @@ function MenuOptionSelector({
 
                       onToggleCheckbox(group, option)
                     }}
-                    className={`rounded-small border px-2 py-1 text-[12px] font-medium transition ${
+                    className={`cursor-pointer rounded-small border px-2 py-1 text-[12px] font-medium transition ${
                       isSelected
                         ? 'border-primary bg-assistive text-primary'
                         : 'border-primary bg-gray-0 text-primary hover:bg-assistive'

@@ -165,9 +165,14 @@ export function CartProvider({ children }) {
     }
   }
 
-  const clearCart = () => {
-    setCartItems([])
-    setTotalCartPrice(0)
+  const clearCart = async () => {
+    try {
+      await Promise.all(cartItems.map((item) => deleteCartItem(item.id)))
+      await loadCart()
+    } catch (error) {
+      console.error('장바구니 비우기 실패:', error)
+      console.error('장바구니 비우기 실패 응답:', error.response?.data)
+    }
   }
 
   return (

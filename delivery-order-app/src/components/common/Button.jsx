@@ -8,7 +8,7 @@ function Button({
   className = '',
 }) {
   const baseStyle =
-    'inline-flex items-center justify-center rounded-button font-bold transition duration-200 disabled:cursor-not-allowed disabled:bg-gray-2 disabled:text-gray-0'
+    'inline-flex cursor-pointer items-center justify-center rounded-button font-bold transition duration-200 disabled:cursor-not-allowed disabled:bg-gray-2 disabled:text-gray-0'
 
   const variantStyle = {
     primary: 'bg-primary text-gray-0 hover:brightness-95',

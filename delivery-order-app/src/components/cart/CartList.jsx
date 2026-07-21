@@ -22,7 +22,7 @@ function CartList({
     <section className="rounded-modal bg-gray-0 p-6">
       <h2 className="text-[24px] font-medium text-gray-5">장바구니</h2>
 
-      <div className="mt-4">
+      <div className="mt-4 flex flex-col gap-4">
         {items.map((item) => (
           <CartItem
             key={item.id}
