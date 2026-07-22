@@ -7,8 +7,16 @@ function OAuthRedirect() {
   const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const accessToken = searchParams.get('accessToken')
+    const accessToken =
+      searchParams.get('accessToken') ||
+      searchParams.get('access_token') ||
+      searchParams.get('token')
+
     const error = searchParams.get('error')
+
+    console.log('카카오 로그인 리다이렉트 URL:', window.location.href)
+    console.log('accessToken:', accessToken)
+    console.log('error:', error)
 
     if (error) {
       alert('카카오 로그인에 실패했습니다. 다시 시도해주세요.')
@@ -17,7 +25,7 @@ function OAuthRedirect() {
     }
 
     if (!accessToken) {
-      alert('로그인 정보를 확인할 수 없습니다. 다시 로그인해주세요.')
+      alert('로그인 토큰을 받지 못했습니다. 다시 로그인해주세요.')
       navigate('/login', { replace: true })
       return
     }
@@ -25,7 +33,7 @@ function OAuthRedirect() {
     setAccessToken(accessToken)
     localStorage.setItem('isLoggedIn', 'true')
 
-    navigate('/main', { replace: true })
+    navigate('/terms', { replace: true })
   }, [navigate, searchParams])
 
   return (

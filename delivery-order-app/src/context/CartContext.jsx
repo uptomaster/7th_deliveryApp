@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAccessToken } from '../api/axiosInstance'
 import {
@@ -18,13 +18,18 @@ export function CartProvider({ children }) {
   const [totalCartPrice, setTotalCartPrice] = useState(0)
   const [isCartLoading, setIsCartLoading] = useState(false)
 
+  const resetCart = () => {
+    setCartId(null)
+    setCartItems([])
+    setTotalCartPrice(0)
+  }
+
   const loadCart = async () => {
     const token = getAccessToken()
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
 
     if (!token || !isLoggedIn) {
-      setCartItems([])
-      setTotalCartPrice(0)
+      resetCart()
       return
     }
 
@@ -38,21 +43,21 @@ export function CartProvider({ children }) {
       setCartItems(cart.items)
       setTotalCartPrice(cart.totalCartPrice)
     } catch (error) {
+      if (error.response?.status === 404) {
+        resetCart()
+        return
+      }
+
       if (error.response?.status !== 401) {
         console.error('장바구니 조회 실패:', error)
         console.error('장바구니 조회 실패 응답:', error.response?.data)
       }
 
-      setCartItems([])
-      setTotalCartPrice(0)
+      resetCart()
     } finally {
       setIsCartLoading(false)
     }
   }
-
-  useEffect(() => {
-    loadCart()
-  }, [])
 
   const addToCart = async (
     restaurantName,
@@ -83,11 +88,6 @@ export function CartProvider({ children }) {
         optionIds,
       }
 
-      console.log('장바구니 추가 restaurantName:', restaurantName)
-      console.log('장바구니 추가 menu:', menu)
-      console.log('장바구니 추가 selectedOptions:', selectedOptions)
-      console.log('장바구니 추가 payload:', payload)
-
       if (!payload.menuId || Number.isNaN(payload.menuId)) {
         alert('메뉴 정보가 올바르지 않습니다.')
         console.error('menuId 오류:', payload)
@@ -107,7 +107,6 @@ export function CartProvider({ children }) {
       }
 
       await addCartItem(payload)
-
       await loadCart()
 
       alert('장바구니에 담겼습니다.')
@@ -165,14 +164,8 @@ export function CartProvider({ children }) {
     }
   }
 
-  const clearCart = async () => {
-    try {
-      await Promise.all(cartItems.map((item) => deleteCartItem(item.id)))
-      await loadCart()
-    } catch (error) {
-      console.error('장바구니 비우기 실패:', error)
-      console.error('장바구니 비우기 실패 응답:', error.response?.data)
-    }
+  const clearCart = () => {
+    resetCart()
   }
 
   return (
