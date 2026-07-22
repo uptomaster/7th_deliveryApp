@@ -33,7 +33,7 @@ function OAuthRedirect() {
     setAccessToken(accessToken)
     localStorage.setItem('isLoggedIn', 'true')
 
-    navigate('/terms', { replace: true })
+    navigate('/main', { replace: true })
   }, [navigate, searchParams])
 
   return (
