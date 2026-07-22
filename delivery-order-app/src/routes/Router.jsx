@@ -6,6 +6,7 @@ import ComponentTest from '../pages/ComponentTest'
 import CreditCharge from '../pages/CreditCharge'
 import Cart from '../pages/Cart'
 import OrderComplete from '../pages/OrderComplete'
+import OAuthRedirect from '../pages/OAuthRedirect'
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
@@ -42,6 +43,7 @@ function Router() {
           </ProtectedRoute>
         }
       />
+      <Route path="/oauth2/redirect" element={<OAuthRedirect />} />
 
       <Route path="/test" element={<ComponentTest />} />
       <Route path="/credit/charge" element={<CreditCharge />} />

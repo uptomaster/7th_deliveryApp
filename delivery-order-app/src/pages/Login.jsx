@@ -38,6 +38,10 @@ function Login() {
     }
   }
 
+  const handleKakaoLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/kakao`
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-1 px-5">
       <div className="w-full max-w-[625px] rounded-modal bg-gray-0 px-5 py-20 shadow-[0px_0px_5px_rgba(0,0,0,0.11)]">
@@ -45,10 +49,13 @@ function Login() {
           어쩌구저쩌구
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[52px]">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-[32px]">
           <div className="flex flex-col gap-[48px] px-4">
             <div className="flex flex-col gap-3">
-              <label className="text-[20px] font-medium text-gray-5">이메일</label>
+              <label className="text-[20px] font-medium text-gray-5">
+                이메일
+              </label>
+
               <Input
                 type="email"
                 value={email}
@@ -58,7 +65,10 @@ function Login() {
             </div>
 
             <div className="flex flex-col gap-3">
-              <label className="text-[20px] font-medium text-gray-5">비밀번호</label>
+              <label className="text-[20px] font-medium text-gray-5">
+                비밀번호
+              </label>
+
               <Input
                 type="password"
                 value={password}
@@ -68,8 +78,29 @@ function Login() {
             </div>
 
             {errorMessage && (
-              <p className="text-[14px] font-medium text-primary">{errorMessage}</p>
+              <p className="text-[14px] font-medium text-primary">
+                {errorMessage}
+              </p>
             )}
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <Button
+              type="submit"
+              variant={isFormFilled ? 'primary' : 'secondary'}
+              size="full"
+              disabled={!isFormFilled || isSubmitting}
+            >
+              {isSubmitting ? '로그인 중...' : '로그인'}
+            </Button>
+
+            <button
+              type="button"
+              onClick={handleKakaoLogin}
+              className="flex h-12 w-full items-center justify-center rounded-button bg-[#FEE500] text-[16px] font-bold text-[#191919] transition hover:brightness-95"
+            >
+              카카오로 로그인
+            </button>
           </div>
 
           <p className="text-center text-[15px] font-medium">
@@ -78,15 +109,6 @@ function Login() {
               회원가입 하기
             </Link>
           </p>
-
-          <Button
-            type="submit"
-            variant={isFormFilled ? 'primary' : 'secondary'}
-            size="full"
-            disabled={!isFormFilled || isSubmitting}
-          >
-            {isSubmitting ? '로그인 중...' : '로그인'}
-          </Button>
         </form>
       </div>
     </div>
